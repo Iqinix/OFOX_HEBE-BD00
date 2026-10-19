@@ -9,8 +9,6 @@ env:
   DEVICE_NAME: Hebe
   DEVICE_PATH: device/hinova/Hebe
   LUNCH_NAME: fox_Hebe-eng
-  MANIFEST_URL: https://gitlab.com/OrangeFox/Manifest.git
-  MANIFEST_BRANCH: fox_11.0
 
 jobs:
   build:
@@ -34,18 +32,23 @@ jobs:
           sudo apt update
           sudo apt install -y gperf gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev \
             x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip \
-            fontconfig libncurses5 curl python3 python-is-python3 repo
+            fontconfig libncurses5 curl python3 python-is-python3 git
+          mkdir -p ~/.bin
+          curl -s https://storage.googleapis.com/git-repo-downloads/repo > ~/.bin/repo
+          chmod a+x ~/.bin/repo
+          echo "$HOME/.bin" >> $GITHUB_PATH
 
       - name: Setup Git Credentials
         run: |
           git config --global user.name "Builder"
           git config --global user.email "builder@github.com"
 
-      - name: Initialize Repo
+      - name: Sync OrangeFox Source
         run: |
-          mkdir ~/fox_tree && cd ~/fox_tree
-          repo init -u ${{ env.MANIFEST_URL }} -b ${{ env.MANIFEST_BRANCH }} --depth=1
-          repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
+          export PATH=$HOME/.bin:$PATH
+          git clone https://gitlab.com/OrangeFox/sync.git ~/OrangeFox_sync
+          cd ~/OrangeFox_sync
+          ./orangefox_sync.sh --branch 11.0 --path ~/fox_tree
 
       - name: Move Device Tree to Build Tree
         run: |

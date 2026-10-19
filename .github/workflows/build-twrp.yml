@@ -3,14 +3,14 @@ name: Build TWRP for Hi Nova 9 Pro (Hebe)
 on:
   workflow_dispatch:
   push:
-    branches: [ "main", "twrp-11.0", "twrp-12.1" ]
+    branches: [ "main", "twrp-11", "twrp-12.1" ]
 
 env:
   DEVICE_NAME: Hebe
   DEVICE_PATH: device/hinova/Hebe
-  LUNCH_NAME: omni_Hebe-eng
-  MANIFEST_URL: https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni.git
-  MANIFEST_BRANCH: twrp-11.0
+  LUNCH_NAME: twrp_Hebe-eng
+  MANIFEST_URL: https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git
+  MANIFEST_BRANCH: twrp-11
 
 jobs:
   build:
@@ -34,7 +34,11 @@ jobs:
           sudo apt update
           sudo apt install -y gperf gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev \
             x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip \
-            fontconfig libncurses5 curl python3 python-is-python3 repo
+            fontconfig libncurses5 curl python3 python-is-python3 git
+          mkdir -p ~/.bin
+          curl -s https://storage.googleapis.com/git-repo-downloads/repo > ~/.bin/repo
+          chmod a+x ~/.bin/repo
+          echo "$HOME/.bin" >> $GITHUB_PATH
 
       - name: Setup Git Credentials
         run: |
@@ -43,6 +47,7 @@ jobs:
 
       - name: Initialize Repo
         run: |
+          export PATH=$HOME/.bin:$PATH
           mkdir ~/twrp_tree && cd ~/twrp_tree
           repo init -u ${{ env.MANIFEST_URL }} -b ${{ env.MANIFEST_BRANCH }} --depth=1
           repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
