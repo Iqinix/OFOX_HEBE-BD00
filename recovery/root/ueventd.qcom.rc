@@ -1,0 +1,6 @@
+# Qualcomm ueventd rules for lahaina / SM7325
+/dev/block/platform/soc/1d84000.ufshc/by-name/* 0660 root system
+/dev/block/bootdevice/by-name/*                  0660 root system
+/dev/input/event*                                0660 root input
+/sys/class/backlight/*                           0660 root system
+/sys/class/udc/*                                 0660 root system

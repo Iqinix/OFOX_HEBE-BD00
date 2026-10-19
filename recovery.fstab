@@ -1,0 +1,34 @@
+# Android fstab file for TWRP / OrangeFox Recovery
+# Hi Nova 9 Pro (Hebe / TINA-AN00) - Qualcomm SM7325 / lahaina
+
+# <src>                                                 <mnt_point>            <type>  <mnt_flags and options>                            <fs_mgr_flags>
+# Logical Dynamic Partitions
+system                                                  /system                ext4    ro,barrier=1                                         wait,logical,first_stage_mount
+vendor                                                  /vendor                ext4    ro,barrier=1                                         wait,logical,first_stage_mount
+hw_product                                              /hw_product            ext4    ro,barrier=1                                         wait,logical,first_stage_mount
+odm                                                     /odm                   ext4    ro,barrier=1                                         wait,logical,first_stage_mount
+cust                                                    /cust                  ext4    ro,barrier=1                                         wait,logical,first_stage_mount
+
+# Physical Core Partitions
+/dev/block/bootdevice/by-name/boot                      /boot                  emmc    defaults                                             defaults
+/dev/block/bootdevice/by-name/recovery                  /recovery              emmc    defaults                                             defaults
+/dev/block/bootdevice/by-name/vendor_boot               /vendor_boot           emmc    defaults                                             defaults
+/dev/block/bootdevice/by-name/dtbo                      /dtbo                  emmc    defaults                                             defaults
+/dev/block/bootdevice/by-name/vbmeta                    /vbmeta                emmc    defaults                                             defaults
+
+# User Data & Metadata
+/dev/block/bootdevice/by-name/userdata                  /data                  f2fs    noatime,nosuid,nodev,discard,inline_data,inline_xattr wait,check,quota,formattable,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized+wrappedkey_v0,keydirectory=/metadata/vold/metadata_encryption
+/dev/block/bootdevice/by-name/metadata                  /metadata              ext4    noatime,nosuid,nodev,discard                         wait,check,formattable,first_stage_mount
+/dev/block/bootdevice/by-name/cache                     /cache                 ext4    noatime,nosuid,nodev,barrier=1                       wait,check
+
+# Firmware & Persistent Partitions
+/dev/block/bootdevice/by-name/persist                   /persist               ext4    noatime,nosuid,nodev,barrier=1                       wait
+/dev/block/bootdevice/by-name/modem                     /firmware              vfat    ro,shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337 wait
+/dev/block/bootdevice/by-name/dsp                       /dsp                   ext4    ro,nosuid,nodev,barrier=1                            wait
+/dev/block/bootdevice/by-name/bluetooth                 /bluetooth             vfat    ro,shortname=lower,uid=1002,gid=3002,dmask=227,fmask=337 wait
+/dev/block/bootdevice/by-name/misc                      /misc                  emmc    defaults                                             defaults
+/dev/block/bootdevice/by-name/super                     /super                 emmc    defaults                                             defaults
+
+# External Storage
+/devices/platform/soc/*.ssusb/*.dwc3/xhci-hcd.*.auto*   /storage/usbotg        vfat    nosuid,nodev                                         wait,voldmanaged=usbotg:auto
+/devices/platform/soc/8804000.sdhci/mmc_host*           /storage/sdcard1       vfat    nosuid,nodev                                         wait,voldmanaged=sdcard1:auto

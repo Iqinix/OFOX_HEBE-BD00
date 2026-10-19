@@ -1,0 +1,26 @@
+# Copyright (c) 2017-2018,2020 The Linux Foundation. All rights reserved.
+# Hi Nova 9 Pro (Hebe / TINA-AN00) init.recovery.qcom.rc
+
+on early-init
+    mkdir /firmware 0771 system system
+    mkdir /dsp 0771 system system
+    mkdir /bluetooth 0771 system system
+
+on init
+    write /sys/class/backlight/panel0-backlight/brightness 1200
+    setprop sys.usb.configfs 1
+
+on property:ro.boot.usbcontroller=*
+    setprop sys.usb.controller ${ro.boot.usbcontroller}
+    write /sys/class/udc/${ro.boot.usbcontroller}/device/../mode peripheral
+
+on fs
+    wait /dev/block/platform/soc/${ro.boot.bootdevice}
+    symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
+    symlink /dev/block/platform/soc/1d84000.ufshc /dev/block/bootdevice
+
+on post-fs
+    start servicemanager
+
+on boot
+    setprop sys.usb.config adb
