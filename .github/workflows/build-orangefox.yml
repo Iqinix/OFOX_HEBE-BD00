@@ -48,7 +48,7 @@ jobs:
           export PATH=$HOME/.bin:$PATH
           git clone https://gitlab.com/OrangeFox/sync.git ~/OrangeFox_sync
           cd ~/OrangeFox_sync
-          ./orangefox_sync.sh --branch 11.0 --path ~/fox_tree
+          ./orangefox_sync.sh --branch 12.1 --path ~/fox_tree
 
       - name: Move Device Tree to Build Tree
         run: |
