@@ -59,7 +59,9 @@ jobs:
       - name: Build OrangeFox
         run: |
           cd ~/fox_tree
+          set +e
           source build/envsetup.sh
+          set -e
           export ALLOW_MISSING_DEPENDENCIES=true
           lunch ${{ env.LUNCH_NAME }} || { echo "lunch failed!"; exit 1; }
           mka recoveryimage || make -j$(nproc --all) recoveryimage

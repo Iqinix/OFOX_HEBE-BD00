@@ -19,4 +19,10 @@ LOCAL_PATH := $(call my-dir)
 
 ifeq ($(TARGET_DEVICE),Hebe)
 include $(call all-subdir-makefiles,$(LOCAL_PATH))
+
+$(PRODUCT_OUT)/dtb.img: $(LOCAL_PATH)/prebuilt/dtb.img
+	@mkdir -p $(dir $@)
+	cp $< $@
+
 endif
+
