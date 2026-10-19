@@ -24,4 +24,6 @@ COMMON_LUNCH_CHOICES := \
     omni_Hebe-userdebug \
     omni_Hebe-eng \
     twrp_Hebe-userdebug \
-    fox_Hebe-userdebug
+    twrp_Hebe-eng \
+    fox_Hebe-userdebug \
+    fox_Hebe-eng

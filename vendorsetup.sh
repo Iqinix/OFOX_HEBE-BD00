@@ -18,4 +18,7 @@
 add_lunch_combo omni_Hebe-userdebug
 add_lunch_combo omni_Hebe-eng
 add_lunch_combo twrp_Hebe-userdebug
+add_lunch_combo twrp_Hebe-eng
 add_lunch_combo fox_Hebe-userdebug
+add_lunch_combo fox_Hebe-eng
+

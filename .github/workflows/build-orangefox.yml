@@ -32,7 +32,7 @@ jobs:
           sudo apt update
           sudo apt install -y gperf gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev \
             x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip \
-            fontconfig libncurses5 curl python3 python-is-python3 git
+            fontconfig libncurses5 curl python3 python-is-python3 git schedtool
           mkdir -p ~/.bin
           curl -s https://storage.googleapis.com/git-repo-downloads/repo > ~/.bin/repo
           chmod a+x ~/.bin/repo
@@ -59,8 +59,9 @@ jobs:
         run: |
           cd ~/fox_tree
           source build/envsetup.sh
+          export ALLOW_MISSING_DEPENDENCIES=true
           lunch ${{ env.LUNCH_NAME }}
-          mka recoveryimage
+          mka recoveryimage || make -j$(nproc --all) recoveryimage
 
       - name: Split and Pack Huawei recovery_ramdisk
         run: |
@@ -68,15 +69,41 @@ jobs:
           mkdir -p out/huawei_out
           cp ${{ env.DEVICE_PATH }}/pack_recovery_ramdisk.py out/huawei_out/
           python3 -c "
-          with open('out/target/product/Hebe/recovery.img', 'rb') as f:
-              data = f.read()
-          import struct
-          magic, ksz, rdsz = struct.unpack('<8sII', data[:16])
-          k_pad = (ksz + 4095) // 4096 * 4096
-          rd_data = data[4096 + k_pad : 4096 + k_pad + rdsz]
+          import os, struct, gzip
+          rec_path = 'out/target/product/Hebe/recovery.img'
+          rd_candidates = [
+              'out/target/product/Hebe/ramdisk-recovery.img',
+              'out/target/product/Hebe/ramdisk-recovery.cpio.gz',
+              'out/target/product/Hebe/ramdisk-recovery.cpio',
+          ]
+          rd_data = None
+          for c in rd_candidates:
+              if os.path.exists(c):
+                  with open(c, 'rb') as f:
+                      rd_data = f.read()
+                  print(f'Found standalone ramdisk candidate {c}: {len(rd_data)} bytes')
+                  break
+          if rd_data is None and os.path.exists(rec_path):
+              with open(rec_path, 'rb') as f:
+                  data = f.read()
+              magic, ksz, rdsz = struct.unpack('<8sII', data[:16])
+              print(f'recovery.img: magic={magic}, ksz={ksz}, rdsz={rdsz}')
+              hdr_ver = struct.unpack('<I', data[40:44])[0] if len(data) > 44 else 0
+              if hdr_ver >= 3:
+                  page_size = 4096
+              else:
+                  page_size = struct.unpack('<I', data[36:40])[0]
+              k_pad = (ksz + page_size - 1) // page_size * page_size
+              rd_data = data[page_size + k_pad : page_size + k_pad + rdsz]
+              print(f'Extracted ramdisk from recovery.img: {len(rd_data)} bytes')
+          if rd_data is None:
+              raise RuntimeError('Could not find recovery.img or ramdisk!')
+          if rd_data[:2] != b'\x1f\x8b':
+              print('Compressing raw cpio ramdisk with gzip...')
+              rd_data = gzip.compress(rd_data)
           with open('out/huawei_out/ramdisk.cpio.gz', 'wb') as rf:
               rf.write(rd_data)
-          print('Extracted ramdisk:', len(rd_data), 'bytes')
+          print('Prepared ramdisk.cpio.gz:', len(rd_data), 'bytes')
           "
           python3 out/huawei_out/pack_recovery_ramdisk.py out/huawei_out/ramdisk.cpio.gz out/huawei_out/recovery_ramdisk_hebe_ofox.img
 
