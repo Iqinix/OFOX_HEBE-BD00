@@ -59,9 +59,11 @@ jobs:
       - name: Build OrangeFox
         run: |
           cd ~/fox_tree
+          set +e
           source build/envsetup.sh
           export ALLOW_MISSING_DEPENDENCIES=true
           lunch ${{ env.LUNCH_NAME }}
+          set -e
           mka recoveryimage || make -j$(nproc --all) recoveryimage
 
       - name: Split and Pack Huawei recovery_ramdisk
