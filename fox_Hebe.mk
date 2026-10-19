@@ -22,6 +22,11 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 # Inherit from Hebe device
 $(call inherit-product, device/hinova/Hebe/device.mk)
 
+# Inherit common recovery configs if available
+$(call inherit-product-if-exists, vendor/recovery/config/common.mk)
+$(call inherit-product-if-exists, vendor/twrp/config/common.mk)
+$(call inherit-product-if-exists, vendor/omni/config/common.mk)
+
 # Device identifier
 PRODUCT_DEVICE := Hebe
 PRODUCT_NAME := fox_Hebe

@@ -22,8 +22,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 # Inherit from Hebe device
 $(call inherit-product, device/hinova/Hebe/device.mk)
 
-# Inherit some common TWRP stuff.
-$(call inherit-product, vendor/twrp/config/common.mk)
+# Inherit some common TWRP/Omni stuff.
+$(call inherit-product-if-exists, vendor/twrp/config/common.mk)
+$(call inherit-product-if-exists, vendor/omni/config/common.mk)
 
 # Device identifier
 PRODUCT_DEVICE := Hebe

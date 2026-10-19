@@ -16,14 +16,15 @@
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/omni_Hebe.mk \
     $(LOCAL_DIR)/twrp_Hebe.mk \
+    $(LOCAL_DIR)/omni_Hebe.mk \
     $(LOCAL_DIR)/fox_Hebe.mk
 
 COMMON_LUNCH_CHOICES := \
-    omni_Hebe-userdebug \
-    omni_Hebe-eng \
-    twrp_Hebe-userdebug \
     twrp_Hebe-eng \
-    fox_Hebe-userdebug \
-    fox_Hebe-eng
+    twrp_Hebe-userdebug \
+    omni_Hebe-eng \
+    omni_Hebe-userdebug \
+    fox_Hebe-eng \
+    fox_Hebe-userdebug
+

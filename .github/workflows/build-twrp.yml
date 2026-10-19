@@ -56,6 +56,7 @@ jobs:
         run: |
           mkdir -p ~/twrp_tree/${{ env.DEVICE_PATH }}
           cp -r ${{ github.workspace }}/${{ env.DEVICE_PATH }}/* ~/twrp_tree/${{ env.DEVICE_PATH }}/
+          ls -la ~/twrp_tree/${{ env.DEVICE_PATH }}
 
       - name: Build TWRP
         run: |

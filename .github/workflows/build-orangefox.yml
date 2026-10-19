@@ -8,7 +8,7 @@ on:
 env:
   DEVICE_NAME: Hebe
   DEVICE_PATH: device/hinova/Hebe
-  LUNCH_NAME: fox_Hebe-eng
+  LUNCH_NAME: twrp_Hebe-eng
 
 jobs:
   build:
@@ -54,6 +54,7 @@ jobs:
         run: |
           mkdir -p ~/fox_tree/${{ env.DEVICE_PATH }}
           cp -r ${{ github.workspace }}/${{ env.DEVICE_PATH }}/* ~/fox_tree/${{ env.DEVICE_PATH }}/
+          ls -la ~/fox_tree/${{ env.DEVICE_PATH }}
 
       - name: Build OrangeFox
         run: |
